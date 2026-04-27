@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Build
+build/
+*.o
+*.gcda
+*.gcno
+coverage_report/
+
+# Coverage
+.coverage
+
+# OS
+.DS_Store
