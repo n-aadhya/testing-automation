@@ -25,25 +25,22 @@ def run_python_tests():
     print("Running Python tests with coverage...")
 
     result = subprocess.run(
-        [
-            "coverage", "run", "-m", "pytest",
-            "../tests/test_generated.py"
-        ],
+        ["coverage", "run", "-m", "pytest", "../tests/test_generated.py"],
         cwd=os.path.join(BASE_DIR, "tools"),
         capture_output=True,
         text=True
     )
 
-    # generate report
-    subprocess.run(
+    report = subprocess.run(
         ["coverage", "report"],
-        cwd=os.path.join(BASE_DIR, "tools")
+        cwd=os.path.join(BASE_DIR, "tools"),
+        capture_output=True,
+        text=True
     )
 
-    print(result.stdout)
-    print(result.stderr)
+    print(report.stdout)
 
-    return result.stdout + result.stderr 
+    return result.stdout + result.stderr + report.stdout
     
 
 

@@ -1,0 +1,329 @@
+For cpp prog:
+vboxuser@Ubuntu:~/Desktop/agent$ python3 -m babyagi.pipeline
+Starting BabyAGI Loop...
+
+Analyzing: /home/vboxuser/Desktop/agent/src/max3.cpp
+Using Lizard for C/C++
+================================================
+  NLOC    CCN   token  PARAM  length  location  
+------------------------------------------------
+       8      4     40      3       8 max3@1-8@/home/vboxuser/Desktop/agent/src/max3.cpp
+1 file analyzed.
+==============================================================
+NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
+--------------------------------------------------------------
+      8       8.0     4.0       40.0         1     /home/vboxuser/Desktop/agent/src/max3.cpp
+
+===============================================================================================================
+No thresholds exceeded (cyclomatic_complexity > 15 or length > 1000 or nloc > 1000000 or parameter_count > 100)
+==========================================================================================
+Total nloc   Avg.NLOC  AvgCCN  Avg.token   Fun Cnt  Warning cnt   Fun Rt   nloc Rt
+------------------------------------------------------------------------------------------
+         8       8.0     4.0       40.0        1            0      0.00    0.00
+
+Extracted CCN: 4
+
+--- Iteration 1 ---
+Extracted Conditions: ['a > b && a > c', 'b > c']
+Generated 4 C++ test cases
+Running C++ tests using gtest...
+Deleting all .da files in . and subdirectories
+Done.
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/vboxuser/Desktop/agent/build
+Consolidate compiler generated dependencies of target runTests
+[ 33%] Building CXX object CMakeFiles/runTests.dir/tests/test_generated.cpp.o
+[ 66%] Linking CXX executable runTests
+[100%] Built target runTests
+Running main() from ./googletest/src/gtest_main.cc
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from AutoTest
+[ RUN      ] AutoTest.Case1
+[       OK ] AutoTest.Case1 (0 ms)
+[ RUN      ] AutoTest.Case2
+[       OK ] AutoTest.Case2 (0 ms)
+[ RUN      ] AutoTest.Case3
+[       OK ] AutoTest.Case3 (0 ms)
+[ RUN      ] AutoTest.Case4
+[       OK ] AutoTest.Case4 (0 ms)
+[----------] 4 tests from AutoTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
+Capturing coverage data from .
+Found gcov version: 11.4.0
+Using intermediate gcov format
+Scanning . for .gcda files ...
+Found 2 data files in .
+Processing tests/test_generated.cpp.gcda
+Processing src/max3.cpp.gcda
+Finished .info-file creation
+Reading tracefile coverage.info
+Summary coverage rate:
+  lines......: 47.6% (80 of 168 lines)
+  functions..: 40.6% (43 of 106 functions)
+  branches...: no data found
+
+Subroutine read_intermediate_text redefined at /usr/bin/geninfo line 2623.
+Subroutine read_intermediate_json redefined at /usr/bin/geninfo line 2655.
+Subroutine intermediate_text_to_info redefined at /usr/bin/geninfo line 2703.
+Subroutine intermediate_json_to_info redefined at /usr/bin/geninfo line 2792.
+Subroutine get_output_fd redefined at /usr/bin/geninfo line 2872.
+Subroutine print_gcov_warnings redefined at /usr/bin/geninfo line 2900.
+Subroutine process_intermediate redefined at /usr/bin/geninfo line 2930.
+
+Coverage: 47%
+⚠️ Improving test cases → New CCN: 9
+
+--- Iteration 2 ---
+Extracted Conditions: ['a > b && a > c', 'b > c']
+Generated 9 C++ test cases
+Running C++ tests using gtest...
+Deleting all .da files in . and subdirectories
+Done.
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/vboxuser/Desktop/agent/build
+Consolidate compiler generated dependencies of target runTests
+[ 33%] Building CXX object CMakeFiles/runTests.dir/tests/test_generated.cpp.o
+[ 66%] Linking CXX executable runTests
+[100%] Built target runTests
+Running main() from ./googletest/src/gtest_main.cc
+[==========] Running 9 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 9 tests from AutoTest
+[ RUN      ] AutoTest.Case1
+[       OK ] AutoTest.Case1 (0 ms)
+[ RUN      ] AutoTest.Case2
+[       OK ] AutoTest.Case2 (0 ms)
+[ RUN      ] AutoTest.Case3
+[       OK ] AutoTest.Case3 (0 ms)
+[ RUN      ] AutoTest.Case4
+[       OK ] AutoTest.Case4 (0 ms)
+[ RUN      ] AutoTest.Case5
+[       OK ] AutoTest.Case5 (0 ms)
+[ RUN      ] AutoTest.Case6
+[       OK ] AutoTest.Case6 (0 ms)
+[ RUN      ] AutoTest.Case7
+[       OK ] AutoTest.Case7 (0 ms)
+[ RUN      ] AutoTest.Case8
+[       OK ] AutoTest.Case8 (0 ms)
+[ RUN      ] AutoTest.Case9
+[       OK ] AutoTest.Case9 (0 ms)
+[----------] 9 tests from AutoTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 9 tests.
+Capturing coverage data from .
+Found gcov version: 11.4.0
+Using intermediate gcov format
+Scanning . for .gcda files ...
+Found 2 data files in .
+Processing tests/test_generated.cpp.gcda
+Processing src/max3.cpp.gcda
+Finished .info-file creation
+Reading tracefile coverage.info
+Summary coverage rate:
+  lines......: 51.9% (95 of 183 lines)
+  functions..: 51.9% (68 of 131 functions)
+  branches...: no data found
+
+Subroutine read_intermediate_text redefined at /usr/bin/geninfo line 2623.
+Subroutine read_intermediate_json redefined at /usr/bin/geninfo line 2655.
+Subroutine intermediate_text_to_info redefined at /usr/bin/geninfo line 2703.
+Subroutine intermediate_json_to_info redefined at /usr/bin/geninfo line 2792.
+Subroutine get_output_fd redefined at /usr/bin/geninfo line 2872.
+Subroutine print_gcov_warnings redefined at /usr/bin/geninfo line 2900.
+Subroutine process_intermediate redefined at /usr/bin/geninfo line 2930.
+
+Coverage: 51%
+⚠️ Improving test cases → New CCN: 12
+
+--- Iteration 3 ---
+Extracted Conditions: ['a > b && a > c', 'b > c']
+Generated 12 C++ test cases
+Running C++ tests using gtest...
+Deleting all .da files in . and subdirectories
+Done.
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/vboxuser/Desktop/agent/build
+Consolidate compiler generated dependencies of target runTests
+[ 33%] Building CXX object CMakeFiles/runTests.dir/tests/test_generated.cpp.o
+[ 66%] Linking CXX executable runTests
+[100%] Built target runTests
+Running main() from ./googletest/src/gtest_main.cc
+[==========] Running 12 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 12 tests from AutoTest
+[ RUN      ] AutoTest.Case1
+[       OK ] AutoTest.Case1 (0 ms)
+[ RUN      ] AutoTest.Case2
+[       OK ] AutoTest.Case2 (0 ms)
+[ RUN      ] AutoTest.Case3
+[       OK ] AutoTest.Case3 (0 ms)
+[ RUN      ] AutoTest.Case4
+[       OK ] AutoTest.Case4 (0 ms)
+[ RUN      ] AutoTest.Case5
+[       OK ] AutoTest.Case5 (0 ms)
+[ RUN      ] AutoTest.Case6
+[       OK ] AutoTest.Case6 (0 ms)
+[ RUN      ] AutoTest.Case7
+[       OK ] AutoTest.Case7 (0 ms)
+[ RUN      ] AutoTest.Case8
+[       OK ] AutoTest.Case8 (0 ms)
+[ RUN      ] AutoTest.Case9
+[       OK ] AutoTest.Case9 (0 ms)
+[ RUN      ] AutoTest.Case10
+[       OK ] AutoTest.Case10 (0 ms)
+[ RUN      ] AutoTest.Case11
+[       OK ] AutoTest.Case11 (0 ms)
+[ RUN      ] AutoTest.Case12
+[       OK ] AutoTest.Case12 (0 ms)
+[----------] 12 tests from AutoTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 12 tests.
+Capturing coverage data from .
+Found gcov version: 11.4.0
+Using intermediate gcov format
+Scanning . for .gcda files ...
+Found 2 data files in .
+Processing tests/test_generated.cpp.gcda
+Processing src/max3.cpp.gcda
+Finished .info-file creation
+Reading tracefile coverage.info
+Summary coverage rate:
+  lines......: 54.2% (104 of 192 lines)
+  functions..: 56.8% (83 of 146 functions)
+  branches...: no data found
+
+Subroutine read_intermediate_text redefined at /usr/bin/geninfo line 2623.
+Subroutine read_intermediate_json redefined at /usr/bin/geninfo line 2655.
+Subroutine intermediate_text_to_info redefined at /usr/bin/geninfo line 2703.
+Subroutine intermediate_json_to_info redefined at /usr/bin/geninfo line 2792.
+Subroutine get_output_fd redefined at /usr/bin/geninfo line 2872.
+Subroutine print_gcov_warnings redefined at /usr/bin/geninfo line 2900.
+Subroutine process_intermediate redefined at /usr/bin/geninfo line 2930.
+
+Coverage: 54%
+⚠️ Improving test cases → New CCN: 15
+
+--- Iteration 4 ---
+Extracted Conditions: ['a > b && a > c', 'b > c']
+Generated 15 C++ test cases
+Running C++ tests using gtest...
+Deleting all .da files in . and subdirectories
+Done.
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/vboxuser/Desktop/agent/build
+Consolidate compiler generated dependencies of target runTests
+[ 33%] Building CXX object CMakeFiles/runTests.dir/tests/test_generated.cpp.o
+[ 66%] Linking CXX executable runTests
+[100%] Built target runTests
+Running main() from ./googletest/src/gtest_main.cc
+[==========] Running 15 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 15 tests from AutoTest
+[ RUN      ] AutoTest.Case1
+[       OK ] AutoTest.Case1 (0 ms)
+[ RUN      ] AutoTest.Case2
+[       OK ] AutoTest.Case2 (0 ms)
+[ RUN      ] AutoTest.Case3
+[       OK ] AutoTest.Case3 (0 ms)
+[ RUN      ] AutoTest.Case4
+[       OK ] AutoTest.Case4 (0 ms)
+[ RUN      ] AutoTest.Case5
+[       OK ] AutoTest.Case5 (0 ms)
+[ RUN      ] AutoTest.Case6
+[       OK ] AutoTest.Case6 (0 ms)
+[ RUN      ] AutoTest.Case7
+[       OK ] AutoTest.Case7 (0 ms)
+[ RUN      ] AutoTest.Case8
+[       OK ] AutoTest.Case8 (0 ms)
+[ RUN      ] AutoTest.Case9
+[       OK ] AutoTest.Case9 (0 ms)
+[ RUN      ] AutoTest.Case10
+[       OK ] AutoTest.Case10 (0 ms)
+[ RUN      ] AutoTest.Case11
+[       OK ] AutoTest.Case11 (0 ms)
+[ RUN      ] AutoTest.Case12
+[       OK ] AutoTest.Case12 (0 ms)
+[ RUN      ] AutoTest.Case13
+[       OK ] AutoTest.Case13 (0 ms)
+[ RUN      ] AutoTest.Case14
+[       OK ] AutoTest.Case14 (0 ms)
+[ RUN      ] AutoTest.Case15
+[       OK ] AutoTest.Case15 (0 ms)
+[----------] 15 tests from AutoTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 15 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 15 tests.
+Capturing coverage data from .
+Found gcov version: 11.4.0
+Using intermediate gcov format
+Scanning . for .gcda files ...
+Found 2 data files in .
+Processing tests/test_generated.cpp.gcda
+Processing src/max3.cpp.gcda
+Finished .info-file creation
+Reading tracefile coverage.info
+Summary coverage rate:
+  lines......: 56.2% (113 of 201 lines)
+  functions..: 60.9% (98 of 161 functions)
+  branches...: no data found
+
+Subroutine read_intermediate_text redefined at /usr/bin/geninfo line 2623.
+Subroutine read_intermediate_json redefined at /usr/bin/geninfo line 2655.
+Subroutine intermediate_text_to_info redefined at /usr/bin/geninfo line 2703.
+Subroutine intermediate_json_to_info redefined at /usr/bin/geninfo line 2792.
+Subroutine get_output_fd redefined at /usr/bin/geninfo line 2872.
+Subroutine print_gcov_warnings redefined at /usr/bin/geninfo line 2900.
+Subroutine process_intermediate redefined at /usr/bin/geninfo line 2930.
+
+Coverage: 56%
+⚠️ Coverage stagnating. Stopping.
+
+Final Status: pass
+
+
+_____________________________________________________________________________________
+_____________________________________________________________________________________
+_____________________________________________________________________________________
+
+
+for python:
+
+vboxuser@Ubuntu:~/Desktop/agent$ python3 -m babyagi.pipeline
+Starting BabyAGI Loop...
+
+Analyzing: /home/vboxuser/Desktop/agent/src/sample.py
+Using Radon for Python
+/home/vboxuser/Desktop/agent/src/sample.py
+    F 1:0 max3 - A
+
+Extracted CCN: 1
+
+--- Iteration 1 ---
+Extracted Conditions: ['a > b and a > c', 'b > c']
+Generated 3 Python test cases
+Running Python tests with coverage...
+Name                                                   Stmts   Miss  Cover
+--------------------------------------------------------------------------
+/home/vboxuser/Desktop/agent/src/sample.py                 6      0   100%
+/home/vboxuser/Desktop/agent/tests/test_generated.py      11      0   100%
+--------------------------------------------------------------------------
+TOTAL                                                     17      0   100%
+
+Coverage: 100%
+✅ Sufficient coverage achieved. Stopping loop.
+
+Final Status: pass
+

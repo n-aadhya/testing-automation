@@ -1,5 +1,10 @@
-class TaskManager:
+class Task:
+    def __init__(self, task_type, payload):
+        self.task_type = task_type
+        self.payload = payload
 
+
+class TaskManager:
     def __init__(self):
         self.queue = []
 
@@ -7,6 +12,4 @@ class TaskManager:
         self.queue.append(task)
 
     def get_next_task(self):
-        if self.queue:
-            return self.queue.pop(0)
-        return None
+        return self.queue.pop(0) if self.queue else None
