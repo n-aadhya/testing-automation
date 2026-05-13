@@ -3,3 +3,5 @@ radon
 pytest
 coverage
 psutil
+openai
+GitPython
