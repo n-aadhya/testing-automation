@@ -1,0 +1,19 @@
+{
+    "REQ-1": {
+        "description": "System should correctly return the maximum among three numbers",
+        "linked_file": "src/max3.cpp",
+        "protocol_context": "MAX3_PROTOCOL",
+        "status": "pending",
+        "coverage": 0,
+        "tests_generated": 0
+    },
+
+    "REQ-2": {
+        "description": "System should handle equal values",
+        "linked_file": "src/max3.cpp",
+        "protocol_context": "MAX3_PROTOCOL",
+        "status": "pending",
+        "coverage": 0,
+        "tests_generated": 0
+    }
+}

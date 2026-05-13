@@ -1,19 +1,34 @@
 #!/bin/bash
 
-cd ../build
+echo "Deleting old coverage files..."
+find . -name "*.gcda" -delete
+find . -name "*.gcno" -delete
 
-# reset coverage
-lcov --directory . --zerocounters
+mkdir -p ../build
+cd ../build || exit
 
 cmake ..
 make
 
+echo "Running tests..."
 ./runTests
 
-# capture coverage
-lcov --capture --directory . --output-file coverage.info
+echo "Capturing coverage..."
 
-# summary
-lcov --summary coverage.info > coverage.txt
+lcov --rc branch_coverage=1 \
+     --capture \
+     --directory . \
+     --output-file coverage.info
 
-cat coverage.txt
+echo "Filtering coverage..."
+
+lcov --remove coverage.info \
+    '/usr/*' \
+    '*/googletest/*' \
+    '*/tests/*' \
+    -o filtered.info
+
+echo "Coverage Summary"
+
+lcov --rc branch_coverage=1 \
+     --summary filtered.info

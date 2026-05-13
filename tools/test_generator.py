@@ -3,8 +3,32 @@ import random
 from tools.language_detector import detect_language
 from tools.ast_parser import extract_conditions, extract_cpp_conditions
 from tools.input_synthesizer import generate_inputs_from_conditions
+from tools.rtm_manager import get_requirements_for_file
+from tools.pcm_manager import get_protocol_context
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
+
+def get_protocol_based_inputs(file_path):
+
+    protocol_inputs = []
+
+    requirements = get_requirements_for_file(file_path)
+
+    for req_id, req_data in requirements:
+
+        protocol_name = req_data["protocol_context"]
+
+        context = get_protocol_context(protocol_name)
+
+        edge_cases = context.get("edge_cases", [])
+
+        for case in edge_cases:
+            a, b, c = case
+            protocol_inputs.append((a, b, c, max(a, b, c)))
+
+    return protocol_inputs
 
 
 # -------------------------------
@@ -35,7 +59,13 @@ def get_test_inputs(file_path, ccn, language):
     print("Extracted Conditions:", conditions)
 
     # Step 2: generate directed inputs
-    inputs = generate_inputs_from_conditions(conditions, ccn)
+    protocol_inputs = get_protocol_based_inputs(file_path)
+
+    inputs = protocol_inputs
+
+    inputs.extend(
+        generate_inputs_from_conditions(conditions, ccn)
+    )
 
     # Step 3: fallback random if needed
     if len(inputs) < ccn:

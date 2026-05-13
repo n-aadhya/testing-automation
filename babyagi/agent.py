@@ -3,6 +3,11 @@ import re
 from tools.complexity import get_complexity
 from tools.test_generator import generate_tests
 from tools.test_runner import run_tests
+from tools.performance_monitor import PerformanceMonitor
+from tools.rtm_manager import (
+    get_requirements_for_file,
+    update_rtm
+)
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -12,11 +17,10 @@ class BabyAGIAgent:
     def __init__(self, file_path):
         self.file_path = file_path
 
-    # -------------------------------
-    # MAIN BABYAGI LOOP
-    # -------------------------------
     def execute_pipeline(self):
         print("Starting BabyAGI Loop...\n")
+
+        monitor = PerformanceMonitor()
 
         result = self.analyze_code()
         ccn = result["ccn"]
@@ -28,33 +32,38 @@ class BabyAGIAgent:
         coverage_threshold = 80
         prev_coverage = 0
 
+        performance_log = []
+
         for iteration in range(max_iterations):
             print(f"\n--- Iteration {iteration+1} ---")
 
-            # Step 1: Generate tests
             generate_tests(self.file_path, ccn)
-
-            # Step 2: Run tests
             test_result = run_tests(self.file_path)
 
-            # Step 3: Evaluate test results
             status = self.evaluate(test_result)
-
-            # Step 4: Extract coverage
             coverage = self.extract_coverage(test_result)
+
+            metrics = monitor.get_metrics()
+
             print(f"Coverage: {coverage}%")
+            print(f"CPU: {metrics['cpu']}% | RAM: {metrics['memory']}% | Time: {metrics['time']}s")
 
-            # Step 5: Stop condition (success)
+            performance_log.append({
+                "iteration": iteration + 1,
+                "coverage": coverage,
+                "cpu": metrics["cpu"],
+                "memory": metrics["memory"],
+                "time": metrics["time"]
+            })
+
             if coverage >= coverage_threshold and status == "pass":
-                print("✅ Sufficient coverage achieved. Stopping loop.")
+                print("Sufficient coverage achieved.")
                 break
 
-            # Step 6: Stop condition (stagnation)
             if iteration > 1 and abs(coverage - prev_coverage) < 3:
-                print("⚠️ Coverage stagnating. Stopping.")
+                print("Coverage stagnating.")
                 break
 
-            # Step 7: Adaptive scaling (VERY IMPORTANT)
             if coverage < 50:
                 ccn += 5
             elif coverage < 80:
@@ -62,15 +71,12 @@ class BabyAGIAgent:
             else:
                 ccn += 1
 
-            print(f"⚠️ Improving test cases → New CCN: {ccn}")
-
             prev_coverage = coverage
+
+        self.save_performance(performance_log)
 
         print("\nFinal Status:", status)
 
-    # -------------------------------
-    # COMPLEXITY ANALYSIS
-    # -------------------------------
     def analyze_code(self):
         full_path = os.path.join(BASE_DIR, self.file_path)
 
@@ -83,15 +89,12 @@ class BabyAGIAgent:
 
         return result
 
-    # -------------------------------
-    # COVERAGE EXTRACTION
-    # -------------------------------
     def extract_coverage(self, output):
-        # Python coverage format
         match_py = re.search(r'TOTAL.*?(\d+)%', output)
+        match_cpp = re.search(r'branches\.*:\s*(\d+\.\d+)%', output)
 
-        # C++ lcov format
-        match_cpp = re.search(r'lines\.*:\s*(\d+\.\d+)%', output)
+        if not match_cpp:
+            match_cpp = re.search(r'lines\.*:\s*(\d+\.\d+)%', output)    
 
         if match_py:
             return int(match_py.group(1))
@@ -101,10 +104,25 @@ class BabyAGIAgent:
 
         return 0
 
-    # -------------------------------
-    # TEST RESULT EVALUATION
-    # -------------------------------
     def evaluate(self, result):
         if "FAILED" in result or "ERROR" in result:
             return "fail"
         return "pass"
+
+    def save_performance(self, log):
+        file_path = os.path.join(BASE_DIR, "results.txt")
+
+        with open(file_path, "w") as f:
+            f.write("Iteration | Coverage | CPU% | RAM% | Time(s)\n")
+            f.write("------------------------------------------------\n")
+
+            for entry in log:
+                f.write(
+                    f"{entry['iteration']} | "
+                    f"{entry['coverage']}% | "
+                    f"{entry['cpu']}% | "
+                    f"{entry['memory']}% | "
+                    f"{entry['time']}s\n"
+                )
+
+        print(f"\nPerformance report saved to {file_path}")

@@ -1,7 +1,7 @@
 from babyagi.agent import BabyAGIAgent
 
 def run():
-    file_path = "src/sample.py"   # change dynamically later
+    file_path = "src/max3.cpp"   # change dynamically later
 
     agent = BabyAGIAgent(file_path)
     agent.execute_pipeline()     # ✅ THIS is the key fix
