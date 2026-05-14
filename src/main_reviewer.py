@@ -41,21 +41,29 @@ def main():
     print(metrics)
     print("------------------------------\n")
     
-    # 5. Review Decision Logic (Complexity, Coverage, Correctness)
+    # 5. Review Decision Logic
     verdict = "APPROVE"
     comments = []
     
+    if not metrics['semgrep_passed']:
+        verdict = "REQUEST_CHANGES"
+        comments.append("🚨 **SECURITY ALERT:** Semgrep found vulnerabilities in the code. Review semantic constraints.")
+
+    if not metrics['rma_safe']:
+        verdict = "REQUEST_CHANGES"
+        comments.append(f"⏱️ **PERFORMANCE ALERT (RMA):** CPU utilization reached {metrics['cpu_utilization']:.2f}%. This exceeds the Rate Monotonic Analysis safe threshold of 69.3%. PR rejected due to real-time safety violations.")
+
     if metrics['coverage'] < 80.0:
         verdict = "REQUEST_CHANGES"
-        comments.append(f"Code coverage dropped to {metrics['coverage']}%. Minimum required is 80%.")
+        comments.append(f"📉 **COVERAGE LOW:** Code coverage is {metrics['coverage']}%. Minimum required is 80%.")
         
     if metrics['complexity'] > 10:
         verdict = "REQUEST_CHANGES"
-        comments.append(f"Cyclomatic complexity is {metrics['complexity']}. Refactor for safety-oriented validation.")
+        comments.append(f"🧠 **COMPLEXITY HIGH:** Cyclomatic complexity exceeds limits. Refactor for safety-oriented validation.")
         
     if not metrics['tests_passed']:
         verdict = "REQUEST_CHANGES"
-        comments.append("AI-generated adaptive tests failed. Correctness criteria not met.")
+        comments.append("❌ **TESTS FAILED:** AI-generated adaptive unit tests failed.")
     
     # 6. Autonomously Approve or Reject
     publish_pr_review(
