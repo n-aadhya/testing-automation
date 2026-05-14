@@ -25,11 +25,15 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest coverage radon GitPython
+          pip install pytest coverage lizard GitPython requests
 
       - name: Run Autonomous Review Framework
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: python src/main_reviewer.py
+        run: |
+          # Create app directory just in case it's missing in the runner
+          mkdir -p app
+          # Run the actual Orchestrator
+          python3 src/main_reviewer.py
