@@ -1,0 +1,3 @@
+/home/vboxuser/Desktop/agent/build/CMakeFiles/runTests.dir
+/home/vboxuser/Desktop/agent/build/CMakeFiles/edit_cache.dir
+/home/vboxuser/Desktop/agent/build/CMakeFiles/rebuild_cache.dir

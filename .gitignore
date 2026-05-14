@@ -1,16 +1,22 @@
-# Python
+# Python caches
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
-# Build
-build/
-*.o
-*.gcda
-*.gcno
-coverage_report/
+# Virtual environments
+venv/
+env/
 
-# Coverage
+# Test and coverage outputs
 .coverage
+coverage.json
+htmlcov/
+tests/test_*.py   # Optional: Ignore generated tests if you don't want to save them
+.pytest_cache/
 
-# OS
-.DS_Store
+# AI Framework outputs
+results.txt
+outputs.txt
+
+# Environment variables (Never push API keys)
+.env

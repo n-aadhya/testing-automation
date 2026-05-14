@@ -1,3 +1,6 @@
-Iteration | Coverage | CPU% | RAM% | Time(s)
-------------------------------------------------
-1 | 100% | 3.2% | 62.2% | 2.59s
+{
+    "tests_passed": false,
+    "coverage": 21.830985915492956,
+    "complexity": 5.2,
+    "execution_time_sec": 7.59
+}

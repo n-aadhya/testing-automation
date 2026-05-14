@@ -1,9 +1,11 @@
+
 import os
 import sys
 from git import Repo
+
 from analyzer.ast_parser import parse_code_constraints
 from generator.ai_test_gen import generate_tests
-from performance_monitor import run_adaptive_tests
+from monitor.performance_monitor import run_adaptive_tests
 from tools.github_client import publish_pr_review
 
 def main():
@@ -16,7 +18,7 @@ def main():
     
     code_changes =[]
     for file in changed_files:
-        if file.endswith('.py') or file.endswith('.cpp'):
+        if file.endswith('.py') or file.endswith('.cpp') and os.path.exists(file):
             code_changes.append(file)
             
     if not code_changes:

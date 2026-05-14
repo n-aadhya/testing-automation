@@ -1,7 +1,0 @@
-lizard
-radon
-pytest
-coverage
-psutil
-openai
-GitPython

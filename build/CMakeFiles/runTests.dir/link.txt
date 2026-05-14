@@ -1,0 +1,1 @@
+/usr/bin/c++  -fprofile-arcs -ftest-coverage CMakeFiles/runTests.dir/src/max3.cpp.o CMakeFiles/runTests.dir/tests/test_generated.cpp.o -o runTests  -lgtest -lgtest_main -lpthread 
