@@ -16,16 +16,18 @@ def main():
     # In GitHub Actions, HEAD is the merge commit, HEAD^1 is base, HEAD^2 is PR branch
     changed_files = [item.a_path for item in repo.index.diff("HEAD~1")]
     
-    code_changes =[]
+    code_changes = []
     for file in changed_files:
-        if file.endswith('.py') or file.endswith('.cpp') and os.path.exists(file):
-            code_changes.append(file)
+        # ONLY analyze files that exist, are Python/C++, AND live in the 'app/' folder
+        if (file.endswith('.py') or file.endswith('.cpp')) and os.path.exists(file):
+            if file.startswith('app/'):  # <--- THIS IS THE CRITICAL FILTER
+                code_changes.append(file)
             
     if not code_changes:
-        print("No Python or C++ files changed. Skipping AI review.")
+        print("No Python or C++ files changed in the 'app/' directory. Skipping AI review.")
         sys.exit(0)
         
-    print(f"Analyzing changes in: {code_changes}")
+    print(f"Analyzing target changes in: {code_changes}")
     
     # 2. Extract Control-flow & Behavioral constraints
     constraints = parse_code_constraints(code_changes)
@@ -35,6 +37,9 @@ def main():
     
     # 4. Execute Adaptive Unit Tests & Monitor Performance
     metrics = run_adaptive_tests(test_files)
+    print("\n--- AI PERFORMANCE METRICS ---")
+    print(metrics)
+    print("------------------------------\n")
     
     # 5. Review Decision Logic (Complexity, Coverage, Correctness)
     verdict = "APPROVE"

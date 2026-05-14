@@ -67,3 +67,4 @@ def generate_tests(constraints, rtm_path, pcm_path):
             f.write(test_code)
             
         generated_test_files.append(test_filename)
+    return generated_test_files
