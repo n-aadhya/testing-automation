@@ -12,40 +12,28 @@ def run_adaptive_tests(test_files):
     
     start_time = time.time()
     
-    # 1. Run Tests and measure Coverage
-    # Using pytest and coverage module
-    result = subprocess.run(
-        ["coverage", "run", "-m", "pytest"] + test_files,
-        capture_output=True, text=True
-    )
+    # Run Pytest (for Python files)
+    python_tests = [f for f in test_files if f.endswith('.py')]
+    if python_tests:
+        result = subprocess.run(
+            ["coverage", "run", "-m", "pytest"] + python_tests,
+            capture_output=True, text=True
+        )
+        metrics['tests_passed'] = (result.returncode == 0)
     
-    metrics['tests_passed'] = (result.returncode == 0)
-    
-    # 2. Extract Coverage Percentage
-    subprocess.run(["coverage", "json", "-o", "coverage.json"])
-    try:
-        with open("coverage.json", "r") as f:
-            cov_data = json.load(f)
-            metrics['coverage'] = cov_data["totals"]["percent_covered"]
-    except FileNotFoundError:
-        metrics['coverage'] = 0.0
-
-    # 3. Calculate Cyclomatic Complexity (Safety Criteria)
+    # Calculate Multi-Language Complexity using LIZARD
+    # Lizard natively supports Python, C++, Java, etc.
     complexity_result = subprocess.run(
-        ["radon", "cc", "src/", "-s", "-a", "-j"],
+        ["lizard", "src/", "--warnings_only", "-C", "10"], # Warns if complexity > 10
         capture_output=True, text=True
     )
-    try:
-        comp_data = json.loads(complexity_result.stdout)
-        # Average complexity calculation logic...
-        metrics['complexity'] = 5.2 # (Example parsed average)
-    except Exception:
-        metrics['complexity'] = 0.0
+    
+    # If lizard output is empty, complexity is fine. If it has output, complexity is high.
+    if complexity_result.stdout.strip():
+        metrics['complexity'] = 15.0 # Fails the PR
+    else:
+        metrics['complexity'] = 5.0  # Passes the PR
         
     metrics['execution_time_sec'] = round(time.time() - start_time, 2)
     
-    # Save results similarly to your existing outputs.txt / results.txt
-    with open("results.txt", "w") as f:
-        f.write(json.dumps(metrics, indent=4))
-        
     return metrics

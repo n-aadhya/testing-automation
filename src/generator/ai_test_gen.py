@@ -31,29 +31,39 @@ def generate_tests(constraints, rtm_path, pcm_path):
     os.makedirs("tests", exist_ok=True)
     
     for filepath, details in constraints.items():
-        if details.get('lang') == "python":
-            prompt = f"""
-            You are an autonomous testing AI. Write robust Pytest unit tests for the functions: {details.get('functions')} in {filepath}.
-            Ensure tests satisfy these Protocol Contexts: {pcm_context}
-            Ensure tests trace back to these Requirements: {rtm_context}
-            Output ONLY the raw Python test code. Do not include markdown blocks like ```python. Include edge cases for {details.get('branches')} branches.
-            """
+        lang = details.get('lang')
+        
+        if lang == "python":
+            framework = "Pytest"
+            file_ext = ".py"
+        elif lang == "cpp":
+            framework = "GTest (Google Test) in C++"
+            file_ext = ".cpp"
+        else:
+            continue
+
+        prompt = f"""
+        You are an autonomous testing AI. Write robust {framework} unit tests for the functions: {details.get('functions', 'the code')} in {filepath}.
+        Ensure tests satisfy these Protocol Contexts: {pcm_context}
+        Ensure tests trace back to these Requirements: {rtm_context}
+        Output ONLY the raw {lang} test code. Do not include markdown blocks.
+        """
+        
+        print(f"Generating {framework} tests for {filepath}...")
+        
+        # Using the OpenRouter auto-free model we set up earlier
+        response = client.chat.completions.create(
+            model="openrouter/free",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        
+        test_code = response.choices[0].message.content
+        # Clean markdown wrappers
+        test_code = test_code.replace(f"```{lang}\n", "").replace("```", "").strip()
+        
+        # Save the test with the correct extension
+        test_filename = f"tests/test_{os.path.basename(filepath).split('.')[0]}{file_ext}"
+        with open(test_filename, "w", encoding='utf-8') as f:
+            f.write(test_code)
             
-            print(f"Generating tests for {filepath} using free OpenRouter model...")
-            
-            # 2. CHANGE MODEL TO A FREE OPENROUTER MODEL
-            response = client.chat.completions.create(
-                model="openrouter/free", 
-                messages=[{"role": "user", "content": prompt}]
-            )
-            
-            test_code = response.choices[0].message.content
-            test_code = test_code.replace("```python\n", "").replace("```python", "").replace("```", "").strip()
-            
-            test_filename = f"tests/test_{os.path.basename(filepath)}"
-            with open(test_filename, "w", encoding='utf-8') as f:
-                f.write(test_code)
-                
-            generated_test_files.append(test_filename)
-            
-    return generated_test_files
+        generated_test_files.append(test_filename)

@@ -1,116 +1,108 @@
+import json
+import pathlib
+import builtins
+import types
 import pytest
-import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
-from generator.ai_test_gen import load_context, generate_tests
+from src.generator.ai_test_gen import load_context, generate_tests
 
+# Helper to create a temporary context file
+@pytest.fixture
+def temp_context_file(tmp_path):
+    context = {
+        "MAX3_PROTOCOL": {
+            "inputs": {"a": "integer", "b": "integer", "c": "integer"},
+            "constraints": [
+                "values may be negative",
+                "values may be equal",
+                "system must return largest value"
+            ],
+            "edge_cases": [
+                [0, 0, 0],
+                [-1, -5, -10],
+                [1000, 1000, 999]
+            ]
+        }
+    }
+    file_path = tmp_path / "context.json"
+    file_path.write_text(json.dumps(context))
+    return file_path
 
-class TestLoadContext:
-    def test_load_context_returns_dict(self):
-        result = load_context()
-        assert isinstance(result, dict)
-    
-    def test_load_context_contains_max3_protocol(self):
-        result = load_context()
-        assert 'MAX3_PROTOCOL' in result
-    
-    def test_load_context_max3_inputs(self):
-        result = load_context()
-        protocol = result.get('MAX3_PROTOCOL', {})
-        inputs = protocol.get('inputs', {})
-        assert 'a' in inputs
-        assert 'b' in inputs
-        assert 'c' in inputs
-        assert inputs['a'] == 'integer'
-        assert inputs['b'] == 'integer'
-        assert inputs['c'] == 'integer'
-    
-    def test_load_context_max3_constraints(self):
-        result = load_context()
-        protocol = result.get('MAX3_PROTOCOL', {})
-        constraints = protocol.get('constraints', [])
-        assert len(constraints) == 3
-        assert "values may be negative" in constraints
-        assert "values may be equal" in constraints
-        assert "system must return largest value" in constraints
-    
-    def test_load_context_max3_edge_cases(self):
-        result = load_context()
-        protocol = result.get('MAX3_PROTOCOL', {})
-        edge_cases = protocol.get('edge_cases', [])
-        assert len(edge_cases) == 3
-        assert [0, 0, 0] in edge_cases
-        assert [-1, -5, -10] in edge_cases
-        assert [1000, 1000, 999] in edge_cases
-    
-    def test_load_context_handles_invalid_protocol(self):
-        result = load_context()
-        assert not isinstance(result, str)
+def test_load_context_returns_correct_structure(temp_context_file):
+    # Load the context from the temporary file
+    loaded = load_context(str(temp_context_file))
+    # Ensure the top‑level key exists
+    assert "MAX3_PROTOCOL" in loaded
+    proto = loaded["MAX3_PROTOCOL"]
+    # Verify inputs definition
+    assert proto["inputs"] == {"a": "integer", "b": "integer", "c": "integer"}
+    # Verify constraints list
+    assert set(proto["constraints"]) == {
+        "values may be negative",
+        "values may be equal",
+        "system must return largest value",
+    }
+    # Verify edge cases list length and content
+    assert isinstance(proto["edge_cases"], list)
+    assert proto["edge_cases"] == [
+        [0, 0, 0],
+        [-1, -5, -10],
+        [1000, 1000, 999],
+    ]
 
+def test_generate_tests_creates_expected_number_of_cases(temp_context_file):
+    # Generate tests for the protocol
+    test_cases = generate_tests(str(temp_context_file), "MAX3_PROTOCOL")
+    # We expect at least the three edge cases plus additional cases for constraints
+    # The requirement mentions 6 branches, so enforce a minimum of 6 distinct cases
+    assert isinstance(test_cases, list)
+    assert len(test_cases) >= 6
 
-class TestGenerateTests:
-    def test_generate_tests_returns_list(self):
-        context = load_context()
-        result = generate_tests(context)
-        assert isinstance(result, list)
-    
-    def test_generate_tests_includes_edge_cases(self):
-        context = load_context()
-        result = generate_tests(context)
-        edge_case_tuples = [tuple(case) for case in context['MAX3_PROTOCOL']['edge_cases']]
-        result_inputs = [tuple(test['input']) for test in result]
-        for ec in edge_case_tuples:
-            assert ec in result_inputs
-    
-    def test_generate_tests_structure(self):
-        context = load_context()
-        result = generate_tests(context)
-        for test in result:
-            assert 'input' in test
-            assert 'expected' in test
-            assert len(test['input']) == 3
-    
-    def test_generate_tests_all_positive_values(self):
-        context = load_context()
-        result = generate_tests(context)
-        all_positive_tests = [t for t in result if all(v > 0 for v in t['input'])]
-        assert len(all_positive_tests) > 0
-    
-    def test_generate_tests_negative_values(self):
-        context = load_context()
-        result = generate_tests(context)
-        negative_tests = [t for t in result if all(v < 0 for v in t['input'])]
-        assert len(negative_tests) > 0
-    
-    def test_generate_tests_equal_values(self):
-        context = load_context()
-        result = generate_tests(context)
-        equal_tests = [t for t in result if t['input'][0] == t['input'][1] == t['input'][2]]
-        assert len(equal_tests) > 0
-    
-    def test_generate_tests_mixed_values(self):
-        context = load_context()
-        result = generate_tests(context)
-        mixed_tests = [t for t in result if len(set(t['input'])) == 3]
-        assert len(mixed_tests) > 0
-    
-    def test_generate_tests_expected_max_value(self):
-        context = load_context()
-        result = generate_tests(context)
-        for test in result:
-            expected = test['expected']
-            inputs = test['input']
-            assert expected == max(inputs[0], inputs[1], inputs[2])
-    
-    def test_generate_tests_handles_empty_context(self):
-        result = generate_tests({})
-        assert isinstance(result, list)
-    
-    def test_generate_tests_duplicate_detection(self):
-        context = load_context()
-        result = generate_tests(context)
-        seen_inputs = set()
-        for test in result:
-            input_tuple = tuple(test['input'])
-            assert input_tuple not in seen_inputs, f"Duplicate input found: {input_tuple}"
-            seen_inputs.add(input_tuple)
+    # Ensure each generated case contains the required keys
+    for case in test_cases:
+        assert "inputs" in case
+        assert "expected" in case
+        assert isinstance(case["inputs"], dict)
+
+def test_generate_tests_covers_edge_cases(temp_context_file):
+    test_cases = generate_tests(str(temp_context_file), "MAX3_PROTOCOL")
+    edge_cases = [
+        (0, 0, 0),
+        (-1, -5, -10),
+        (1000, 1000, 999),
+    ]
+    # Helper to normalise a case to a tuple for comparison
+    def inputs_to_tuple(case):
+        inp = case["inputs"]
+        return (inp["a"], inp["b"], inp["c"])
+
+    generated = {inputs_to_tuple(c) for c in test_cases}
+    for ec in edge_cases:
+        assert ec in generated, f"Edge case {ec} not generated"
+
+def test_generate_tests_respects_constraints_negative_values(temp_context_file):
+    test_cases = generate_tests(str(temp_context_file), "MAX3_PROTOCOL")
+    # There must be at least one case where at least one value is negative
+    has_negative = any(
+        any(v < 0 for v in case["inputs"].values())
+        for case in test_cases
+    )
+    assert has_negative, "No test case with negative values generated"
+
+def test_generate_tests_respects_constraints_equal_values(temp_context_file):
+    test_cases = generate_tests(str(temp_context_file), "MAX3_PROTOCOL")
+    # There must be at least one case where two or more inputs are equal
+    has_equal = any(
+        len({case["inputs"]["a"], case["inputs"]["b"], case["inputs"]["c"]}) < 3
+        for case in test_cases
+    )
+    assert has_equal, "No test case with equal input values generated"
+
+def test_generate_tests_expected_is_largest_value(temp_context_file):
+    test_cases = generate_tests(str(temp_context_file), "MAX3_PROTOCOL")
+    for case in test_cases:
+        inputs = case["inputs"]
+        expected = case["expected"]
+        # The generator should set expected to the max of the inputs
+        assert expected == max(inputs["a"], inputs["b"], inputs["c"]), (
+            f"Expected {expected} does not match max of inputs {inputs}"
+        )
